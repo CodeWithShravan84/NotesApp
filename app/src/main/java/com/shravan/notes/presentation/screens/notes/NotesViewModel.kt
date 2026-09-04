@@ -42,16 +42,18 @@ class NotesViewModel: ViewModel() {
 
     init {
         query
-            .flatMapLatest {
-                if (it.isBlank()){
+            .onEach {input ->
+                _state.update { it.copy(query = input) } }
+            .flatMapLatest {input ->
+                if (input.isBlank()){
                     getAllNotesUseCase()
                 }else{
-                    searchNoteUseCase(it)
+                    searchNoteUseCase(input)
                 }
             }
-            .onEach {
-                val pinnedNotes = it.filter { it.isPinned }
-                val otherNotes = it.filter { !it.isPinned }
+            .onEach {notes ->
+                val pinnedNotes = notes.filter { it.isPinned }
+                val otherNotes = notes.filter { !it.isPinned }
                 _state.update { it.copy(pinnedNotes = pinnedNotes, otherNotes = otherNotes) }
             }
             .launchIn(scope)
@@ -67,7 +69,7 @@ class NotesViewModel: ViewModel() {
                 editNoteUseCase(command.note.copy(title = "$title edited"))
             }
             is NotesCommand.InputSearchQuery -> {
-
+                query.update { command.query.trim() }
             }
             is NotesCommand.SwitchPinnedStatus -> {
                 switchPinnedStatusUseCase(command.noteId)

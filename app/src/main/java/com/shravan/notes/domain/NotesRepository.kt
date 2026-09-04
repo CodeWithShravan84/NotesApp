@@ -3,7 +3,7 @@ package com.shravan.notes.domain
 import kotlinx.coroutines.flow.Flow
 
 interface NotesRepository {
-    fun addNote(note: Note)
+    fun addNote(title: String,content: String)
 
     fun deleteNote(noteInt: Int)
 
