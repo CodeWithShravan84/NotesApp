@@ -59,6 +59,12 @@ class NotesViewModel: ViewModel() {
             .launchIn(scope)
     }
 
+    private fun addSomeNotes(){
+        repeat(50){
+            addNotesUseCase(title = "Title N$it", content = "Content N$it")
+        }
+    }
+
     fun processCommand(command: NotesCommand){
         when(command){
             is NotesCommand.DeleteNote -> {
